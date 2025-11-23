@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Propuesta - Librería Editorial</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <h1><i class="fas fa-edit"></i> Editar Propuesta</h1>
+      </div>
+      <div class="user-menu">
+        <a href="/dashboard/autor"><i class="fas fa-arrow-left"></i> Volver</a>
+        <a href="/logout">Salir</a>
+      </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+        <button
+          type="button"
+          class="close"
+          onclick="this.parentElement.style.display='none'">
+          &times;
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="container">
+      <div class="form-container">
+        <h2>Editar: {{ propuesta.titulo }}</h2>
+
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="proposal-form">
+          <div class="form-group">
+            <label for="titulo">Título del Manuscrito *</label>
+            <input
+              type="text"
+              id="titulo"
+              name="titulo"
+              value="{{ propuesta.titulo }}"
+              maxlength="200"
+              required />
+          </div>
+
+          <div class="form-group">
+            <label for="genero">Género Literario *</label>
+            <select id="genero" name="genero" required>
+              <option value="">Selecciona un género</option>
+              <option value="Ficcion" {% if propuesta.genero == 'Ficcion' %}selected{% endif %}>Ficción</option>
+              <option value="No Ficción" {% if propuesta.genero == 'No Ficción' %}selected{% endif %}>No Ficción</option>
+              <option value="Poesía" {% if propuesta.genero == 'Poesía' %}selected{% endif %}>Poesía</option>
+              <option value="Novela" {% if propuesta.genero == 'Novela' %}selected{% endif %}>Novela</option>
+              <option value="Ensayo" {% if propuesta.genero == 'Ensayo' %}selected{% endif %}>Ensayo</option>
+              <option value="Ciencia Ficción" {% if propuesta.genero == 'Ciencia Ficción' %}selected{% endif %}>Ciencia Ficción</option>
+              <option value="Romance" {% if propuesta.genero == 'Romance' %}selected{% endif %}>Romance</option>
+              <option value="Thriller" {% if propuesta.genero == 'Thriller' %}selected{% endif %}>Thriller</option>
+              <option value="Fantasía" {% if propuesta.genero == 'Fantasía' %}selected{% endif %}>Fantasía</option>
+              <option value="Historia" {% if propuesta.genero == 'Historia' %}selected{% endif %}>Historia</option>
+              <option value="Biografía" {% if propuesta.genero == 'Biografía' %}selected{% endif %}>Biografía</option>
+              <option value="Drama" {% if propuesta.genero == 'Drama' %}selected{% endif %}>Drama</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="num_paginas">Número de Páginas</label>
+            <input
+              type="number"
+              id="num_paginas"
+              name="num_paginas"
+              value="{{ propuesta.num_paginas or '' }}"
+              min="1" />
+          </div>
+
+          <div class="form-group">
+            <label for="descripcion"
+              >Sinopsis / Descripción * (mínimo 50 caracteres)</label
+            >
+            <textarea id="descripcion" name="descripcion" rows="6" required>
+{{ propuesta.descripcion }}</textarea
+            >
+            <small
+              >Caracteres:
+              <span id="char-count">{{ propuesta.descripcion|length }}</span>/50
+              mínimo</small
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Manuscrito Actual</label>
+            {% if propuesta.manuscrito_url %} {% if
+            propuesta.manuscrito_url.startswith('http') %}
+            <p>
+              <i class="fas fa-link"></i>
+              <a href="{{ propuesta.manuscrito_url }}" target="_blank">
+                {{ propuesta.manuscrito_url }}
+              </a>
+            </p>
+            {% else %}
+            <p>
+              <i class="far fa-file-pdf"></i>
+              {{ propuesta.manuscrito_url.split('/')[-1] }}
+            </p>
+            {% endif %} {% else %}
+            <p class="text-muted">No hay manuscrito adjunto</p>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="manuscrito_file"
+              >Subir Nuevo Manuscrito (opcional)</label
+            >
+            <input
+              type="file"
+              id="manuscrito_file"
+              name="manuscrito_file"
+              accept=".pdf,.doc,.docx" />
+            <small
+              >Formatos: PDF, DOC, DOCX (máx. 50MB). Esto reemplazará el
+              manuscrito actual.</small
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="manuscrito_url">O proporciona una URL (opcional)</label>
+            {% set url_value = '' %} {% if propuesta.manuscrito_url and
+            propuesta.manuscrito_url.startswith('http') %} {% set url_value =
+            propuesta.manuscrito_url %} {% endif %}
+            <input
+              type="url"
+              id="manuscrito_url"
+              name="manuscrito_url"
+              value="{{ url_value }}"
+              placeholder="https://drive.google.com/..." />
+            <small
+              >Si proporcionas una URL, se usará en lugar del archivo
+              subido.</small
+            >
+          </div>
+
+          <div class="form-actions">
+            <a href="/dashboard/autor" class="btn-secondary">Cancelar</a>
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const textarea = document.getElementById('descripcion');
+      const charCount = document.getElementById('char-count');
+
+      textarea.addEventListener('input', function () {
+        charCount.textContent = this.value.length;
+      });
+    </script>
+  </body>
+</html>

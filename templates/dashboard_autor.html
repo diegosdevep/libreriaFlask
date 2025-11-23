@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Autor - Librería Editorial</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <h1><i class="fas fa-feather-alt"></i> Panel de Autor</h1>
+      </div>
+      <div class="user-menu">
+        <span><i class="fas fa-user"></i> {{ autor.nombre }}</span>
+        <a href="/logout">Salir</a>
+      </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+        <button
+          type="button"
+          class="close"
+          onclick="this.parentElement.style.display='none'">
+          &times;
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="container">
+      <div class="welcome-section">
+        <h2>¡Bienvenido de nuevo, {{ autor.nombre.split()[0] }}!</h2>
+        <p>Aquí está el resumen de tu actividad editorial</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-file-alt" style="color: #667eea"></i>
+          </div>
+          <div class="stat-label">Propuestas Enviadas</div>
+          <div class="stat-value">{{ stats.total_propuestas }}</div>
+          <div class="stat-subtext">Total enviadas</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle" style="color: #48bb78"></i>
+          </div>
+          <div class="stat-label">Propuestas Aceptadas</div>
+          <div class="stat-value">{{ stats.aceptadas }}</div>
+          <div class="stat-subtext">
+            {{ stats.tasa_aceptacion }}% tasa de aceptación
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-book" style="color: #4facfe"></i>
+          </div>
+          <div class="stat-label">Libros Publicados</div>
+          <div class="stat-value">{{ stats.libros_publicados }}</div>
+          <div class="stat-subtext">Disponibles en catálogo</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-search" style="color: #f5a623"></i>
+          </div>
+          <div class="stat-label">En Revisión</div>
+          <div class="stat-value">{{ stats.en_revision }}</div>
+          <div class="stat-subtext">Esperando respuesta</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-clock" style="color: #ffc107"></i>
+          </div>
+          <div class="stat-label">Pendientes</div>
+          <div class="stat-value">{{ stats.pendientes }}</div>
+          <div class="stat-subtext">Sin asignar</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-times-circle" style="color: #f56565"></i>
+          </div>
+          <div class="stat-label">Rechazadas</div>
+          <div class="stat-value">{{ stats.rechazadas }}</div>
+          <div class="stat-subtext">No aprobadas</div>
+        </div>
+      </div>
+
+      <div class="cta-button">
+        <div class="cta-content">
+          <h3>¿Tienes una nueva historia?</h3>
+          <p>Envía tu manuscrito y comienza el proceso editorial</p>
+        </div>
+        <a href="/autor/nueva-propuesta" class="btn-primary">
+          <i class="fas fa-plus"></i> Enviar Nueva Propuesta
+        </a>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h3>Mis Propuestas</h3>
+          <div class="filter-tabs">
+            <a
+              href="/dashboard/autor?filtro=all"
+              class="tab-btn {% if filtro_actual == 'all' %}active{% endif %}">
+              Todas
+            </a>
+            <a
+              href="/dashboard/autor?filtro=pendiente"
+              class="tab-btn {% if filtro_actual == 'pendiente' %}active{% endif %}">
+              Pendientes
+            </a>
+            <a
+              href="/dashboard/autor?filtro=aceptada"
+              class="tab-btn {% if filtro_actual == 'aceptada' %}active{% endif %}">
+              Aceptadas
+            </a>
+            <a
+              href="/dashboard/autor?filtro=rechazada"
+              class="tab-btn {% if filtro_actual == 'rechazada' %}active{% endif %}">
+              Rechazadas
+            </a>
+          </div>
+        </div>
+
+        <div class="proposals-list">
+          {% if propuestas %} {% for propuesta in propuestas %}
+          <div class="proposal-card">
+            <div class="proposal-header">
+              <div class="proposal-info">
+                <h4>{{ propuesta.titulo }}</h4>
+                <div class="proposal-meta">
+                  <span
+                    ><i class="far fa-calendar"></i> Enviado: {{
+                    propuesta.fecha_envio.strftime('%d/%m/%Y') }}</span
+                  >
+                  <span
+                    ><i class="far fa-file"></i> {{ propuesta.num_paginas or
+                    'N/A' }} páginas</span
+                  >
+                  <span><i class="fas fa-tag"></i> {{ propuesta.genero }}</span>
+                </div>
+              </div>
+
+              {% if propuesta.estado == 'aceptada' %}
+              <span class="proposal-status status-accepted">
+                <i class="fas fa-check-circle"></i> Aceptada
+              </span>
+              {% elif propuesta.estado == 'en_revision' %}
+              <span class="proposal-status status-reviewing">
+                <i class="fas fa-search"></i> En Revisión
+              </span>
+              {% elif propuesta.estado == 'pendiente' %}
+              <span class="proposal-status status-pending">
+                <i class="fas fa-clock"></i> Pendiente
+              </span>
+              {% elif propuesta.estado == 'rechazada' %}
+              <span class="proposal-status status-rejected">
+                <i class="fas fa-times-circle"></i> Rechazada
+              </span>
+              {% endif %}
+            </div>
+
+            <p class="proposal-description">
+              {{ propuesta.descripcion[:150] }}{% if
+              propuesta.descripcion|length > 150 %}...{% endif %}
+            </p>
+
+            <div class="proposal-actions">
+              <a
+                href="/autor/propuesta/{{ propuesta.id }}"
+                class="btn-action btn-view">
+                <i class="fas fa-eye"></i> Ver Detalles
+              </a>
+
+              {% if propuesta.estado == 'pendiente' %}
+              <a
+                href="/autor/propuesta/{{ propuesta.id }}/editar"
+                class="btn-action btn-edit">
+                <i class="fas fa-edit"></i> Editar
+              </a>
+              <form
+                method="POST"
+                action="/autor/propuesta/{{ propuesta.id }}/eliminar"
+                style="display: inline"
+                onsubmit="return confirm('¿Estás seguro de eliminar esta propuesta?')">
+                <button type="submit" class="btn-action btn-delete">
+                  <i class="fas fa-trash"></i> Eliminar
+                </button>
+              </form>
+              {% endif %} {% if propuesta.estado == 'rechazada' %}
+              <form
+                method="POST"
+                action="/autor/propuesta/{{ propuesta.id }}/eliminar"
+                style="display: inline"
+                onsubmit="return confirm('¿Estás seguro de eliminar esta propuesta?')">
+                <button type="submit" class="btn-action btn-delete">
+                  <i class="fas fa-trash"></i> Eliminar
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i
+                class="fas fa-search"
+                style="font-size: 48px; color: #cbd5e0"></i>
+            </div>
+            <h4>
+              No hay propuestas {% if filtro_actual == 'pendiente' %}pendientes
+              {% elif filtro_actual == 'aceptada' %}aceptadas {% elif
+              filtro_actual == 'rechazada' %}rechazadas {% endif %}
+            </h4>
+            <p>
+              {% if filtro_actual == 'all' %} Comienza tu viaje editorial
+              enviando tu primera propuesta {% else %} Intenta con otro filtro
+              para ver tus propuestas {% endif %}
+            </p>
+            {% if filtro_actual == 'all' %}
+            <a href="/autor/nueva-propuesta" class="btn-primary"
+              >Enviar Propuesta</a
+            >
+            {% else %}
+            <a href="/dashboard/autor?filtro=all" class="btn-secondary"
+              >Ver todas</a
+            >
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h3>Mis Libros Publicados</h3>
+          <span class="results-count">
+            {{ libros|length }} libro{% if libros|length != 1 %}s{% endif %}
+          </span>
+        </div>
+
+        <div class="books-grid">
+          {% if libros %} {% for libro in libros %}
+          <div class="book-card">
+            <div
+              class="book-cover genre-{{ libro.genero|lower|replace(' ', '-') }}">
+              <i class="fas fa-book" style="font-size: 48px; color: white"></i>
+            </div>
+            <div class="book-info">
+              <h4 class="book-title">{{ libro.titulo }}</h4>
+              <p class="book-meta">
+                Publicado: {{ libro.fecha_publicacion.strftime('%B %Y') }}
+              </p>
+              <div class="book-sales">
+                <div class="sales-info">
+                  <span class="sales-label">Precio</span>
+                  <span class="sales-value"
+                    >${{ "{:,.0f}".format(libro.precio) }}</span
+                  >
+                </div>
+                <div class="sales-info">
+                  <span class="sales-label">Estado</span>
+                  <span class="sales-value">{{ libro.estado }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i
+                class="fas fa-book-open"
+                style="font-size: 48px; color: #cbd5e0"></i>
+            </div>
+            <h4>Aún no tienes libros publicados</h4>
+            <p>Una vez que tus propuestas sean aceptadas, aparecerán aquí</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function (alert) {
+          setTimeout(function () {
+            alert.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(function () {
+              alert.style.display = 'none';
+            }, 300);
+          }, 5000);
+        });
+      });
+    </script>
+  </body>
+</html>

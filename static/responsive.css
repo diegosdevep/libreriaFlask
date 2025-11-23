@@ -1,0 +1,107 @@
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: 20px;
+  }
+
+  .navbar-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .hero-section h2 {
+    font-size: 2em;
+  }
+
+  .hero-section p {
+    font-size: 1.2em;
+  }
+
+  .login-container,
+  .register-container,
+  .form-container {
+    margin: 40px 20px;
+    padding: 40px 24px;
+  }
+
+  .form-row,
+  .genres-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-tabs {
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .books-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-section h2 {
+    font-size: 2em;
+  }
+
+  .cta-button {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .proposal-header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .proposal-actions {
+    flex-direction: column;
+  }
+
+  .btn-action {
+    width: 100%;
+  }
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .stat-number {
+    font-size: 2.5em;
+  }
+
+  .recent-books {
+    grid-template-columns: 1fr;
+  }
+
+  .book-preview-cover {
+    height: 220px;
+    font-size: 3em;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-section h3 {
+    font-size: 2em;
+  }
+
+  .cta-section p {
+    font-size: 1.1em;
+  }
+
+  .section-title {
+    font-size: 2em;
+  }
+}

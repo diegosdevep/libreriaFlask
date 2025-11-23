@@ -1,0 +1,249 @@
+.header-section {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.header-section h2 {
+  font-size: 3em;
+  color: var(--text-color);
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: -0.02em;
+}
+
+.header-section p {
+  font-size: 1.3em;
+  color: var(--text-muted);
+}
+
+.filters-wrapper {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
+  box-shadow: var(--shadow-md);
+}
+
+.filters {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  color: var(--text-color);
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 12px var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 1em;
+  color: var(--text-color);
+  background: var(--background);
+  transition: all 0.2s;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: var(--white);
+}
+
+.filter-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: 60px;
+}
+
+.book-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.book-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+.book-cover {
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5em;
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.book-cover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.book-card:hover .book-cover::before {
+  opacity: 1;
+}
+
+.genre-ficcion {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.genre-poesia {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.genre-no-ficcion {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.genre-novela {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.genre-ensayo {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.genre-ciencia-ficcion {
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+.book-info {
+  padding: var(--spacing-lg);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-category {
+  color: var(--primary-color);
+  font-size: 0.85em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+}
+
+.book-title {
+  color: var(--text-color);
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.book-author {
+  color: var(--text-muted);
+  font-size: 0.95em;
+  margin-bottom: var(--spacing-md);
+}
+
+.book-description {
+  color: var(--text-muted);
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.book-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.book-price {
+  color: var(--text-color);
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+.book-info .btn-view {
+  display: block;
+  padding: 12px 24px;
+  background: var(--primary-color);
+  color: var(--white);
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  font-size: 1em;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.book-info .btn-view:hover {
+  background: var(--primary-hover);
+  transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .header-section h2 {
+    font-size: 2em;
+  }
+
+  .header-section p {
+    font-size: 1.1em;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .books-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .book-cover {
+    height: 320px;
+    font-size: 4em;
+  }
+
+  .book-title {
+    font-size: 1.3em;
+  }
+
+  .book-price {
+    font-size: 1.2em;
+  }
+}

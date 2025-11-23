@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro - Librería Editorial</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <h1>
+        <i class="fas fa-book" style="color: #2f6594; font-size: 28px"></i
+        >Librería Editorial
+      </h1>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/catalogo">Catálogo</a>
+      </div>
+    </nav>
+
+    <div class="register-container">
+      <div class="register-header">
+        <h2>Crear Cuenta</h2>
+        <p>Únete a nuestra comunidad de autores</p>
+      </div>
+
+      {% if error %}
+      <div class="error-message">{{ error }}</div>
+      {% endif %}
+
+      <form class="register-form" method="POST" action="/register">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              placeholder="Tu nombre"
+              required />
+          </div>
+
+          <div class="form-group">
+            <label for="apellido">Apellido</label>
+            <input
+              type="text"
+              id="apellido"
+              name="apellido"
+              placeholder="Tu apellido"
+              required />
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="tu@email.com"
+            required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              minlength="6"
+              required />
+          </div>
+
+          <div class="form-group">
+            <label for="confirm_password">Confirmar Contraseña</label>
+            <input
+              type="password"
+              id="confirm_password"
+              name="confirm_password"
+              placeholder="••••••••"
+              minlength="6"
+              required />
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label style="margin-bottom: 12px">Géneros de interés</label>
+          <div class="genres-grid">
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="ficcion" />
+              <span class="checkbox-label">📖 Ficción</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="no-ficcion" />
+              <span class="checkbox-label">📚 No Ficción</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="poesia" />
+              <span class="checkbox-label">🌙 Poesía</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="novela" />
+              <span class="checkbox-label">📕 Novela</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="ensayo" />
+              <span class="checkbox-label">✍️ Ensayo</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="ciencia-ficcion" />
+              <span class="checkbox-label">🚀 Ciencia Ficción</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="romance" />
+              <span class="checkbox-label">💕 Romance</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="thriller" />
+              <span class="checkbox-label">🎭 Thriller</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="fantasia" />
+              <span class="checkbox-label">🧙‍♂️ Fantasía</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="historia" />
+              <span class="checkbox-label">📜 Historia</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="biografia" />
+              <span class="checkbox-label">👤 Biografía</span>
+            </label>
+
+            <label class="genre-checkbox">
+              <input type="checkbox" name="generos" value="drama" />
+              <span class="checkbox-label">🎬 Drama</span>
+            </label>
+          </div>
+          <small
+            style="
+              color: #86868b;
+              font-size: 0.85em;
+              margin-top: 12px;
+              display: block;
+            ">
+            Selecciona al menos un género en el que te gustaría publicar
+          </small>
+        </div>
+
+        <button type="submit" class="btn-register">Crear Cuenta</button>
+
+        <div class="form-footer">
+          <p>
+            ¿Ya tienes cuenta?
+            <a href="/login">Inicia sesión aquí</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

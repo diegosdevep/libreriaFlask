@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de Libros - Librería Editorial</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <h1>
+        <i class="fas fa-book" style="color: #2f6594; font-size: 28px"></i
+        >Librería Editorial
+      </h1>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/catalogo">Catálogo</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="header-section">
+        <h2>Catálogo de Libros</h2>
+        <p>Descubre nuestra colección</p>
+      </div>
+
+      <div class="filters-wrapper">
+        <form method="GET" action="/catalogo">
+          <div class="filters">
+            <div class="filter-group">
+              <label for="q"><i class="fas fa-search"></i> Buscar</label>
+              <input
+                type="text"
+                name="q"
+                id="q"
+                value="{{ query }}"
+                placeholder="Buscar libros..." />
+            </div>
+            <div class="filter-group">
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-search"></i> Buscar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="books-grid">
+        {% if libros %} {% for libro in libros %}
+        <div class="book-card">
+          <div
+            class="book-cover"
+            style="
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            ">
+            {% if libro.cover_i %}
+            <img
+              src="https://covers.openlibrary.org/b/id/{{ libro.cover_i }}-M.jpg"
+              alt="{{ libro.title }}"
+              style="width: 100%; height: 100%; object-fit: cover" />
+            {% else %}
+            <i class="fas fa-book" style="font-size: 48px; color: white"></i>
+            {% endif %}
+          </div>
+          <div class="book-info">
+            <h3 class="book-title">{{ libro.title }}</h3>
+            <p class="book-author">
+              <i class="fas fa-pen"></i>
+              {{ libro.author_name[0] if libro.author_name else 'Autor
+              desconocido' }}
+            </p>
+            <a
+              href="https://openlibrary.org{{ libro.key }}"
+              target="_blank"
+              class="btn-view">
+              <i class="fas fa-external-link-alt"></i> Ver detalles
+            </a>
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px">
+          <i class="fas fa-search" style="font-size: 64px; color: #cbd5e0"></i>
+          <h3>No se encontraron libros</h3>
+          <p style="color: #86868b">Intenta buscar algo diferente</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nueva Propuesta - Librería Editorial</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <h1>
+          <i class="fas fa-feather-alt" style="color: #667eea"></i> Panel de
+          Autor
+        </h1>
+      </div>
+      <div class="user-menu">
+        <span><i class="fas fa-user"></i> {{ session.nombre }}</span>
+        <a href="/logout">Salir</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div
+        class="register-container"
+        style="max-width: 800px; margin: 40px auto">
+        <div class="register-header">
+          <h2>
+            <i class="fas fa-file-alt" style="color: #667eea"></i>
+            Nueva Propuesta de Libro
+          </h2>
+          <p>Completa los detalles de tu manuscrito</p>
+        </div>
+
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %} {% if success %}
+        <div class="success-message">{{ success }}</div>
+        {% endif %}
+
+        <form
+          class="register-form"
+          method="POST"
+          action="/autor/nueva-propuesta"
+          enctype="multipart/form-data">
+          <div class="form-group full-width">
+            <label for="titulo">Título del Libro *</label>
+            <input
+              type="text"
+              id="titulo"
+              name="titulo"
+              placeholder="El título de tu obra"
+              required
+              maxlength="200" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="genero">Género Literario *</label>
+              <select id="genero" name="genero" required>
+                <option value="">Selecciona un género</option>
+                <option value="Ficción">Ficción</option>
+                <option value="No Ficción">No Ficción</option>
+                <option value="Poesía">Poesía</option>
+                <option value="Novela">Novela</option>
+                <option value="Ensayo">Ensayo</option>
+                <option value="Ciencia Ficción">Ciencia Ficción</option>
+                <option value="Romance">Romance</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Fantasía">Fantasía</option>
+                <option value="Historia">Historia</option>
+                <option value="Biografía">Biografía</option>
+                <option value="Drama">Drama</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="num_paginas">Número de Páginas</label>
+              <input
+                type="number"
+                id="num_paginas"
+                name="num_paginas"
+                placeholder="Ej: 250"
+                min="1"
+                max="9999" />
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="descripcion">Sinopsis / Descripción *</label>
+            <textarea
+              id="descripcion"
+              name="descripcion"
+              placeholder="Describe tu libro, la trama principal, personajes y qué lo hace especial..."
+              required
+              rows="6"
+              style="
+                padding: 14px 16px;
+                border: 1px solid #d2d2d7;
+                border-radius: 10px;
+                font-size: 1em;
+                color: #1d1d1f;
+                background: #f5f5f7;
+                font-family: inherit;
+                resize: vertical;
+                width: 100%;
+              "></textarea>
+            <small
+              style="
+                color: #86868b;
+                font-size: 0.85em;
+                display: block;
+                margin-top: 4px;
+              ">
+              Mínimo 50 caracteres. Sé descriptivo pero conciso.
+            </small>
+          </div>
+
+          <div class="form-group full-width">
+            <label style="margin-bottom: 12px">
+              ¿Cómo deseas enviar tu manuscrito? *
+            </label>
+            <div style="display: flex; gap: 12px; margin-bottom: 16px">
+              <label class="genre-checkbox" style="flex: 1">
+                <input
+                  type="radio"
+                  name="metodo_envio"
+                  value="archivo"
+                  checked
+                  onchange="toggleMetodo()" />
+                <span class="checkbox-label">
+                  <i class="far fa-file-pdf" style="color: #f56565"></i> Subir
+                  Archivo
+                </span>
+              </label>
+              <label class="genre-checkbox" style="flex: 1">
+                <input
+                  type="radio"
+                  name="metodo_envio"
+                  value="url"
+                  onchange="toggleMetodo()" />
+                <span class="checkbox-label">
+                  <i class="fas fa-link" style="color: #4facfe"></i> Enlace Web
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group full-width" id="archivo-section">
+            <label for="manuscrito_file"
+              >Manuscrito (PDF, DOC, DOCX, EPUB) *</label
+            >
+            <input
+              type="file"
+              id="manuscrito_file"
+              name="manuscrito_file"
+              accept=".pdf,.doc,.docx,.epub"
+              style="
+                padding: 14px 16px;
+                border: 1px solid #d2d2d7;
+                border-radius: 10px;
+                font-size: 1em;
+                color: #1d1d1f;
+                background: #f5f5f7;
+                width: 100%;
+                cursor: pointer;
+              " />
+            <small
+              style="
+                color: #86868b;
+                font-size: 0.85em;
+                display: block;
+                margin-top: 4px;
+              ">
+              Tamaño máximo: 50 MB. Formatos permitidos: PDF, DOC, DOCX, EPUB
+            </small>
+          </div>
+
+          <div
+            class="form-group full-width"
+            id="url-section"
+            style="display: none">
+            <label for="manuscrito_url">
+              Enlace al Manuscrito (Google Drive, Dropbox, etc.) *
+            </label>
+            <input
+              type="url"
+              id="manuscrito_url"
+              name="manuscrito_url"
+              placeholder="https://drive.google.com/..." />
+            <small
+              style="
+                color: #86868b;
+                font-size: 0.85em;
+                display: block;
+                margin-top: 4px;
+              ">
+              Asegúrate de que el enlace sea público o compartido con permisos
+              de lectura
+            </small>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 20px">
+            <button type="submit" class="btn-register" style="flex: 1">
+              <i class="fas fa-paper-plane" style="color: white"></i> Enviar
+              Propuesta
+            </button>
+            <a
+              href="/dashboard/autor"
+              class="btn-secondary"
+              style="
+                flex: 1;
+                text-align: center;
+                padding: 14px 32px;
+                display: inline-block;
+              ">
+              Cancelar
+            </a>
+          </div>
+
+          <div class="form-footer">
+            <p style="color: #86868b; font-size: 0.9em">
+              Una vez enviada, tu propuesta será revisada por nuestro equipo
+              editorial. Recibirás una notificación cuando haya novedades.
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function toggleMetodo() {
+        const metodo = document.querySelector(
+          'input[name="metodo_envio"]:checked'
+        ).value;
+        const archivoSection = document.getElementById('archivo-section');
+        const urlSection = document.getElementById('url-section');
+
+        if (metodo === 'archivo') {
+          archivoSection.style.display = 'block';
+          urlSection.style.display = 'none';
+          document.getElementById('manuscrito_file').required = true;
+          document.getElementById('manuscrito_url').required = false;
+        } else {
+          archivoSection.style.display = 'none';
+          urlSection.style.display = 'block';
+          document.getElementById('manuscrito_file').required = false;
+          document.getElementById('manuscrito_url').required = true;
+        }
+      }
+    </script>
+  </body>
+</html>

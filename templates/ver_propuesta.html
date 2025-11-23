@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ propuesta.titulo }} - Librería Editorial</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <h1>
+          <i class="fas fa-book" style="color: #2f6594; font-size: 28px"></i>
+          Librería Editorial
+        </h1>
+      </div>
+      <div class="user-menu">
+        <a href="/dashboard/autor"><i class="fas fa-arrow-left"></i> Volver</a>
+        <a href="/logout">Salir</a>
+      </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+        <button
+          type="button"
+          class="close"
+          onclick="this.parentElement.style.display='none'">
+          &times;
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="container">
+      <div class="proposal-detail">
+        <div class="proposal-detail-header">
+          <div>
+            <h2>{{ propuesta.titulo }}</h2>
+            <div class="proposal-meta">
+              <span
+                ><i class="far fa-calendar"></i> {{
+                propuesta.fecha_envio.strftime('%d/%m/%Y %H:%M') }}</span
+              >
+              <span><i class="fas fa-tag"></i> {{ propuesta.genero }}</span>
+              <span
+                ><i class="far fa-file"></i> {{ propuesta.num_paginas or 'N/A'
+                }} páginas</span
+              >
+            </div>
+          </div>
+
+          {% if propuesta.estado == 'aceptada' %}
+          <span class="proposal-status status-accepted">
+            <i class="fas fa-check-circle"></i> Aceptada
+          </span>
+          {% elif propuesta.estado == 'en_revision' %}
+          <span class="proposal-status status-reviewing">
+            <i class="fas fa-search"></i> En Revisión
+          </span>
+          {% elif propuesta.estado == 'pendiente' %}
+          <span class="proposal-status status-pending">
+            <i class="fas fa-clock"></i> Pendiente
+          </span>
+          {% elif propuesta.estado == 'rechazada' %}
+          <span class="proposal-status status-rejected">
+            <i class="fas fa-times-circle"></i> Rechazada
+          </span>
+          {% endif %}
+        </div>
+
+        <div class="proposal-detail-section">
+          <h3><i class="fas fa-book-open"></i> Descripción</h3>
+          <p class="proposal-description-full">{{ propuesta.descripcion }}</p>
+        </div>
+
+        <div class="proposal-detail-section">
+          <h3><i class="fas fa-paperclip"></i> Manuscrito</h3>
+          {% if propuesta.manuscrito_url %} {% if
+          propuesta.manuscrito_url.startswith('http') %}
+          <a
+            href="{{ propuesta.manuscrito_url }}"
+            target="_blank"
+            class="btn-primary">
+            <i class="fas fa-external-link-alt"></i> Abrir Enlace
+          </a>
+          {% else %}
+          <a
+            href="{{ url_for('autor.uploaded_file', filename=propuesta.manuscrito_url.split('/')[-1]) }}"
+            target="_blank"
+            class="btn-primary">
+            <i class="far fa-file-pdf"></i> Ver Manuscrito
+          </a>
+          {% endif %} {% else %}
+          <p class="text-muted">No hay manuscrito adjunto</p>
+          {% endif %}
+        </div>
+
+        {% if propuesta.fecha_revision %}
+        <div class="proposal-detail-section">
+          <h3><i class="far fa-calendar-check"></i> Fecha de Revisión</h3>
+          <p>{{ propuesta.fecha_revision.strftime('%d/%m/%Y %H:%M') }}</p>
+        </div>
+        {% endif %} {% if propuesta.editor %}
+        <div class="proposal-detail-section">
+          <h3><i class="fas fa-user-tie"></i> Editor Asignado</h3>
+          <p>{{ propuesta.editor.nombre }}</p>
+        </div>
+        {% endif %}
+
+        <div class="proposal-detail-actions">
+          <a href="/dashboard/autor" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+          </a>
+
+          {% if propuesta.estado == 'pendiente' %}
+          <a
+            href="/autor/propuesta/{{ propuesta.id }}/editar"
+            class="btn-primary">
+            <i class="fas fa-edit"></i> Editar
+          </a>
+          <form
+            method="POST"
+            action="/autor/propuesta/{{ propuesta.id }}/eliminar"
+            style="display: inline"
+            onsubmit="return confirm('¿Seguro que quieres eliminar esta propuesta?');">
+            <button type="submit" class="btn-danger">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </form>
+          {% endif %} {% if propuesta.estado == 'rechazada' %}
+          <form
+            method="POST"
+            action="/autor/propuesta/{{ propuesta.id }}/eliminar"
+            style="display: inline"
+            onsubmit="return confirm('¿Seguro que quieres eliminar esta propuesta?');">
+            <button type="submit" class="btn-danger">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
