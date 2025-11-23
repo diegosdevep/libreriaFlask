@@ -1,7 +1,9 @@
 import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import credentials
 import pyrebase
 import os
+import json
+import base64
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,13 +18,26 @@ firebase_config = {
     "databaseURL": "" 
 }
 
-
 firebase = pyrebase.initialize_app(firebase_config)
 auth_client = firebase.auth()
 
 try:
-    cred = credentials.Certificate(os.getenv("FIREBASE_ADMIN_SDK_PATH"))
+    if os.getenv('FIREBASE_CREDENTIALS_BASE64'):
+        firebase_creds = json.loads(
+            base64.b64decode(os.getenv('FIREBASE_CREDENTIALS_BASE64'))
+        )
+        cred = credentials.Certificate(firebase_creds)
+        print("Cargando credenciales desde variable de entorno")
+    
+    elif os.path.exists('serviceAccountKey.json'):
+        cred = credentials.Certificate('serviceAccountKey.json')
+        print("Cargando credenciales desde archivo local")
+    
+    else:
+        raise ValueError("No se encontró serviceAccountKey.json ni FIREBASE_CREDENTIALS_BASE64")
+    
     firebase_admin.initialize_app(cred)
-    print("Firebase Admin inicializado correctamente")
+    print("✅ Firebase Admin inicializado correctamente")
+    
 except Exception as e:
     print(f"Error al inicializar Firebase Admin: {e}")
