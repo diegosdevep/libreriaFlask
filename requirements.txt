@@ -17,4 +17,4 @@ python-dotenv==1.0.0
 firebase-admin==6.3.0
 Pyrebase4==4.7.1
 setuptools==69.0.0
-requests==2.31.0
+requests==2.29.0 
