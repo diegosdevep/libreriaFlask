@@ -31,8 +31,7 @@ def subir_a_s3(archivo, user_id):
             Config.AWS_S3_BUCKET,
             key,
             ExtraArgs={
-                'ContentType': archivo.content_type,
-                'ServerSideEncryption': 'AES256'
+                'ContentType': archivo.content_type
             }
         )
         

@@ -86,22 +86,14 @@
 
         <div class="proposal-detail-section">
           <h3><i class="fas fa-paperclip"></i> Manuscrito</h3>
-          {% if propuesta.manuscrito_url %} {% if
-          propuesta.manuscrito_url.startswith('http') %}
+          {% if propuesta.manuscrito_url %}
           <a
             href="{{ propuesta.manuscrito_url }}"
             target="_blank"
             class="btn-primary">
-            <i class="fas fa-external-link-alt"></i> Abrir Enlace
-          </a>
-          {% else %}
-          <a
-            href="{{ url_for('autor.uploaded_file', filename=propuesta.manuscrito_url.split('/')[-1]) }}"
-            target="_blank"
-            class="btn-primary">
             <i class="far fa-file-pdf"></i> Ver Manuscrito
           </a>
-          {% endif %} {% else %}
+          {% else %}
           <p class="text-muted">No hay manuscrito adjunto</p>
           {% endif %}
         </div>
