@@ -17,11 +17,11 @@ def create_app():
     app.register_blueprint(editor_bp)
     app.register_blueprint(admin_bp)
     
-    @app.errorhandler(403)
-    def forbidden(e):
-        session.clear()
-        flash('No tienes permisos para acceder. Inicia sesión nuevamente', 'warning')
-        return redirect('/login')
+    # @app.errorhandler(403)
+    # def forbidden(e):
+    #     session.clear()
+    #     flash('No tienes permisos para acceder. Inicia sesión nuevamente', 'warning')
+    #     return redirect('/login')
     
     with app.app_context():
         db.create_all()
