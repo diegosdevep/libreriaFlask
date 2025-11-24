@@ -166,3 +166,48 @@ def perfil():
         return redirect('/login')
     
     return redirect(get_dashboard_url(user.rol))
+
+@auth_bp.route('/setup-usuarios-xyz')
+def setup_usuarios():
+    from models import db, User
+    from werkzeug.security import generate_password_hash
+    import uuid
+    
+    admin = User.query.filter_by(email='admin@gmail.com').first()
+    if not admin:
+        admin = User(
+            id=str(uuid.uuid4()),
+            nombre='Administrador',
+            email='admin@gmail.com',
+            password=generate_password_hash('123123'),
+            rol='admin',
+            generos_interes=''
+        )
+        db.session.add(admin)
+    
+    editor1 = User.query.filter_by(email='editor1@gmail.com').first()
+    if not editor1:
+        editor1 = User(
+            id=str(uuid.uuid4()),
+            nombre='Maria Garcia',
+            email='editor1@gmail.com',
+            password=generate_password_hash('123123'),
+            rol='editor',
+            generos_interes='Ficcion, Misterio'
+        )
+        db.session.add(editor1)
+    
+    editor2 = User.query.filter_by(email='editor2@gmail.com').first()
+    if not editor2:
+        editor2 = User(
+            id=str(uuid.uuid4()),
+            nombre='Carlos Martinez',
+            email='editor2@gmail.com',
+            password=generate_password_hash('123123'),
+            rol='editor',
+            generos_interes='No Ficcion, Ciencia'
+        )
+        db.session.add(editor2)
+    
+    db.session.commit()
+    return "Usuarios creados"
