@@ -69,33 +69,54 @@ def dashboard_autor():
 @role_required('autor')
 def nueva_propuesta():
     if request.method == 'POST':
+        print("=" * 50)
+        print("INICIANDO NUEVA PROPUESTA")
+        
         titulo = request.form.get('titulo')
         genero = request.form.get('genero')
         num_paginas = request.form.get('num_paginas')
         descripcion = request.form.get('descripcion')
         manuscrito_url = request.form.get('manuscrito_url')
         
+        print(f"Titulo: {titulo}")
+        print(f"Genero: {genero}")
+        print(f"Paginas: {num_paginas}")
+        print(f"Descripcion: {descripcion[:50]}...")
+        print(f"URL: {manuscrito_url}")
+        
         valido, error = validar_propuesta(titulo, genero, descripcion)
+        print(f"Validacion: valido={valido}, error={error}")
+        
         if not valido:
             flash(error, 'error')
+            print(f"VALIDACION FALLIDA: {error}")
             return render_template('nueva_propuesta.html')
         
         archivo = request.files.get('manuscrito_file')
+        print(f"Archivo recibido: {archivo.filename if archivo and archivo.filename else 'No hay archivo'}")
+        
         archivo_path = None
         
         try:
             archivo_path = guardar_manuscrito(archivo, session['user_id'])
+            print(f"Archivo guardado en: {archivo_path}")
         except ValueError as e:
             flash(str(e), 'error')
+            print(f"ERROR AL GUARDAR ARCHIVO (ValueError): {e}")
             return render_template('nueva_propuesta.html')
-        except Exception:
+        except Exception as e:
             flash('Error al guardar el archivo. Intenta nuevamente.', 'error')
+            print(f"ERROR AL GUARDAR ARCHIVO (Exception): {e}")
+            import traceback
+            traceback.print_exc()
             return render_template('nueva_propuesta.html')
         
         if not archivo_path and not manuscrito_url:
             flash('Debes subir un archivo o proporcionar un enlace al manuscrito', 'error')
+            print("ERROR: No hay archivo ni URL")
             return render_template('nueva_propuesta.html')
         
+        print("Creando objeto Propuesta...")
         nueva_propuesta = Propuesta(
             titulo=titulo,
             genero=genero,
@@ -107,14 +128,20 @@ def nueva_propuesta():
         )
         
         try:
+            print("Agregando a la base de datos...")
             db.session.add(nueva_propuesta)
             db.session.commit()
+            print("PROPUESTA GUARDADA EXITOSAMENTE")
             flash('¡Propuesta enviada exitosamente!', 'success')
+            print("Redirigiendo a dashboard...")
             return redirect('/dashboard/autor')
-        except Exception:
+        except Exception as e:
             db.session.rollback()
             eliminar_archivo(archivo_path)
             flash('Error al enviar la propuesta. Intenta nuevamente.', 'error')
+            print(f"ERROR AL GUARDAR EN BD: {e}")
+            import traceback
+            traceback.print_exc()
             return render_template('nueva_propuesta.html')
     
     return render_template('nueva_propuesta.html')

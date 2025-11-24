@@ -38,8 +38,11 @@ class Propuesta(db.Model):
     fecha_envio = db.Column(db.DateTime, default=datetime.utcnow)
     fecha_revision = db.Column(db.DateTime)
     
-    autor_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=False)  # ✅ Cambiado a String
-    editor_id = db.Column(db.String(128), db.ForeignKey('users.id'))  # ✅ Ya estaba bien
+    autor_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=False)  
+    editor_id = db.Column(db.String(128), db.ForeignKey('users.id'))  
+
+    libro = db.relationship('Libro', backref='propuesta_ref', uselist=False, lazy=True)
+
 
 
 class Libro(db.Model):

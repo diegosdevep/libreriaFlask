@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Administrador - Libreria Editorial</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <h1>
+          <i class="fas fa-user-shield" style="color: #667eea"></i> Panel de
+          Administrador
+        </h1>
+      </div>
+      <div class="user-menu">
+        <span><i class="fas fa-user"></i> {{ admin.nombre }}</span>
+        <a href="/logout">Salir</a>
+      </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+        <button
+          type="button"
+          class="close"
+          onclick="this.parentElement.style.display='none'">
+          &times;
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="container">
+      <div class="dashboard-header">
+        <h2>Panel de Control General</h2>
+        <p>Gestion completa de la plataforma editorial</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users" style="color: #667eea"></i>
+          </div>
+          <div class="stat-label">Autores</div>
+          <div class="stat-value">{{ stats.total_autores }}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-user-tie" style="color: #4facfe"></i>
+          </div>
+          <div class="stat-label">Editores</div>
+          <div class="stat-value">{{ stats.total_editores }}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-book" style="color: #48bb78"></i>
+          </div>
+          <div class="stat-label">Libros Publicados</div>
+          <div class="stat-value">{{ stats.libros_publicados }}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-clock" style="color: #ffc107"></i>
+          </div>
+          <div class="stat-label">Pendientes</div>
+          <div class="stat-value">{{ stats.pendientes }}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-search" style="color: #f5a623"></i>
+          </div>
+          <div class="stat-label">En Revision</div>
+          <div class="stat-value">{{ stats.en_revision }}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle" style="color: #48bb78"></i>
+          </div>
+          <div class="stat-label">Aceptadas</div>
+          <div class="stat-value">{{ stats.aceptadas }}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-times-circle" style="color: #f56565"></i>
+          </div>
+          <div class="stat-label">Rechazadas</div>
+          <div class="stat-value">{{ stats.rechazadas }}</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-tasks" style="color: #667eea"></i>
+          </div>
+          <div class="stat-label">Total Propuestas</div>
+          <div class="stat-value">{{ stats.total_propuestas }}</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h3>Propuestas</h3>
+          <div class="filter-tabs">
+            <a
+              href="/dashboard/admin?filtro=all"
+              class="tab-btn {% if filtro_actual == 'all' %}active{% endif %}"
+              >Todas</a
+            >
+            <a
+              href="/dashboard/admin?filtro=pendiente"
+              class="tab-btn {% if filtro_actual == 'pendiente' %}active{% endif %}"
+              >Pendientes</a
+            >
+            <a
+              href="/dashboard/admin?filtro=en_revision"
+              class="tab-btn {% if filtro_actual == 'en_revision' %}active{% endif %}"
+              >En Revision</a
+            >
+            <a
+              href="/dashboard/admin?filtro=aceptada"
+              class="tab-btn {% if filtro_actual == 'aceptada' %}active{% endif %}"
+              >Aceptadas</a
+            >
+            <a
+              href="/dashboard/admin?filtro=rechazada"
+              class="tab-btn {% if filtro_actual == 'rechazada' %}active{% endif %}"
+              >Rechazadas</a
+            >
+          </div>
+        </div>
+
+        <div class="proposals-list">
+          {% if propuestas %} {% for propuesta in propuestas %}
+          <div class="proposal-card">
+            <div class="proposal-header">
+              <div class="proposal-info">
+                <h4>{{ propuesta.titulo }}</h4>
+                <div class="proposal-meta">
+                  <span
+                    ><i class="fas fa-user"></i> {{ propuesta.autor.nombre
+                    }}</span
+                  >
+                  <span
+                    ><i class="far fa-calendar"></i> {{
+                    propuesta.fecha_envio.strftime('%d/%m/%Y') }}</span
+                  >
+                  <span
+                    ><i class="far fa-file"></i> {{ propuesta.num_paginas or
+                    'N/A' }} paginas</span
+                  >
+                  <span><i class="fas fa-tag"></i> {{ propuesta.genero }}</span>
+                </div>
+              </div>
+
+              {% if propuesta.libro %}
+              <span class="proposal-status status-published"
+                ><i class="fas fa-book"></i> Publicado</span
+              >
+              {% elif propuesta.estado == 'aceptada' %}
+              <span class="proposal-status status-accepted"
+                ><i class="fas fa-check-circle"></i> Aceptada</span
+              >
+              {% elif propuesta.estado == 'en_revision' %}
+              <span class="proposal-status status-reviewing"
+                ><i class="fas fa-search"></i> En Revision</span
+              >
+              {% elif propuesta.estado == 'pendiente' %}
+              <span class="proposal-status status-pending"
+                ><i class="fas fa-clock"></i> Pendiente</span
+              >
+              {% elif propuesta.estado == 'rechazada' %}
+              <span class="proposal-status status-rejected"
+                ><i class="fas fa-times-circle"></i> Rechazada</span
+              >
+              {% endif %}
+            </div>
+
+            <p class="proposal-description">
+              {{ propuesta.descripcion[:200] if propuesta.descripcion else 'Sin
+              descripcion' }} {% if propuesta.descripcion and
+              propuesta.descripcion|length > 200 %}...{% endif %}
+            </p>
+
+            <div class="proposal-actions">
+              <a
+                href="/admin/propuesta/{{ propuesta.id }}"
+                class="btn-action btn-view">
+                <i class="fas fa-eye"></i> Ver Detalles
+              </a>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i
+                class="fas fa-inbox"
+                style="font-size: 64px; color: #cbd5e0"></i>
+            </div>
+            <h4>No hay propuestas para mostrar</h4>
+            <p>Intenta con otro filtro</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function (alert) {
+          setTimeout(function () {
+            alert.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(function () {
+              alert.style.display = 'none';
+            }, 300);
+          }, 5000);
+        });
+      });
+    </script>
+  </body>
+</html>
