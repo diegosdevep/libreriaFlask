@@ -1,5 +1,6 @@
 from flask import render_template, request, jsonify
 from routes import public_bp
+from models import Libro
 import requests
 import os
 
@@ -10,19 +11,33 @@ def index():
 @public_bp.route('/catalogo')
 def catalogo():
     user_query = request.args.get('q', '')
-    query = user_query if user_query else 'bestseller'
     
+    if user_query:
+        libros_db = Libro.query.filter(
+            Libro.estado == 'publicado',
+            (Libro.titulo.ilike(f'%{user_query}%') | 
+             Libro.autor_nombre.ilike(f'%{user_query}%') |
+             Libro.genero.ilike(f'%{user_query}%'))
+        ).all()
+    else:
+        libros_db = Libro.query.filter_by(estado='publicado').all()
+    
+    libros_api = []
+    query_api = user_query if user_query else 'bestseller'  
     try:
         response = requests.get(
             'https://openlibrary.org/search.json',
-            params={'q': query, 'limit': 12}
+            params={'q': query_api, 'limit': 12}
         )
         data = response.json()
-        libros = data.get('docs', [])
+        libros_api = data.get('docs', [])
     except:
-        libros = []
+        libros_api = []
     
-    return render_template('catalogo.html', libros=libros, query=user_query)
+    return render_template('catalogo.html', 
+                         libros_db=libros_db, 
+                         libros_api=libros_api, 
+                         query=user_query)
 
 @public_bp.route('/chat', methods=['POST'])
 def chat():

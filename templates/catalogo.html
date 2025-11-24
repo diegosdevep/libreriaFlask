@@ -14,8 +14,8 @@
   <body>
     <nav class="navbar">
       <h1>
-        <i class="fas fa-book" style="color: #2f6594; font-size: 28px"></i
-        >Librería Editorial
+        <i class="fas fa-book" style="color: #2f6594; font-size: 28px"></i>
+        Librería Editorial
       </h1>
       <div class="nav-links">
         <a href="/">Home</a>
@@ -50,8 +50,63 @@
         </form>
       </div>
 
+      {% if libros_db %}
+      <div style="margin: 40px 0 20px">
+        <h3 style="color: #1d1d1f; font-size: 24px; margin-bottom: 10px">
+          <i class="fas fa-star" style="color: #667eea"></i> Publicados en
+          nuestra plataforma
+        </h3>
+        <p style="color: #86868b; margin-bottom: 20px">
+          Libros de autores independientes
+        </p>
+      </div>
+
       <div class="books-grid">
-        {% if libros %} {% for libro in libros %}
+        {% for libro in libros_db %}
+        <div class="book-card">
+          <div
+            class="book-cover"
+            style="
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            ">
+            <i class="fas fa-book" style="font-size: 48px; color: white"></i>
+          </div>
+          <div class="book-info">
+            <h3 class="book-title">{{ libro.titulo }}</h3>
+            <p class="book-author">
+              <i class="fas fa-pen"></i> {{ libro.autor_nombre }}
+            </p>
+            <p style="color: #86868b; font-size: 14px; margin: 8px 0">
+              <i class="fas fa-tag"></i> {{ libro.genero }}
+            </p>
+            <p
+              style="
+                color: #2f6594;
+                font-weight: 600;
+                font-size: 18px;
+                margin: 8px 0;
+              ">
+              ${{ "%.2f"|format(libro.precio) }}
+            </p>
+            <button class="btn-view" style="width: 100%">
+              <i class="fas fa-shopping-cart"></i> Comprar
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% if libros_api %}
+      <div style="margin: 60px 0 20px">
+        <h3 style="color: #1d1d1f; font-size: 24px; margin-bottom: 10px">
+          <i class="fas fa-globe"></i> Otros libros recomendados
+        </h3>
+        <p style="color: #86868b; margin-bottom: 20px">
+          De nuestra biblioteca global
+        </p>
+      </div>
+
+      <div class="books-grid">
+        {% for libro in libros_api %}
         <div class="book-card">
           <div
             class="book-cover"
@@ -82,14 +137,19 @@
             </a>
           </div>
         </div>
-        {% endfor %} {% else %}
-        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px">
-          <i class="fas fa-search" style="font-size: 64px; color: #cbd5e0"></i>
-          <h3>No se encontraron libros</h3>
-          <p style="color: #86868b">Intenta buscar algo diferente</p>
-        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% if not libros_db and not libros_api %}
+      <div style="text-align: center; padding: 60px 20px">
+        <i class="fas fa-search" style="font-size: 64px; color: #cbd5e0"></i>
+        <h3>No se encontraron libros</h3>
+        {% if query %}
+        <p style="color: #86868b">No hay resultados para "{{ query }}"</p>
+        {% else %}
+        <p style="color: #86868b">Realiza una búsqueda para ver libros</p>
         {% endif %}
       </div>
+      {% endif %}
     </div>
   </body>
 </html>

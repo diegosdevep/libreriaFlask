@@ -261,7 +261,10 @@
           {% if libros %} {% for libro in libros %}
           <div class="book-card">
             <div
-              class="book-cover genre-{{ libro.genero|lower|replace(' ', '-') }}">
+              class="book-cover"
+              style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              ">
               <i class="fas fa-book" style="font-size: 48px; color: white"></i>
             </div>
             <div class="book-info">
