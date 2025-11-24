@@ -22,22 +22,27 @@ firebase = pyrebase.initialize_app(firebase_config)
 auth_client = firebase.auth()
 
 try:
-    if os.getenv('FIREBASE_CREDENTIALS_BASE64'):
+    if os.getenv('FIREBASE_CREDENTIALS'):
+        firebase_creds = json.loads(os.getenv('FIREBASE_CREDENTIALS'))
+        cred = credentials.Certificate(firebase_creds)
+        print("Cargando credenciales desde FIREBASE_CREDENTIALS (JSON directo)")
+    
+    elif os.getenv('FIREBASE_CREDENTIALS_BASE64'):
         firebase_creds = json.loads(
             base64.b64decode(os.getenv('FIREBASE_CREDENTIALS_BASE64'))
         )
         cred = credentials.Certificate(firebase_creds)
-        print("Cargando credenciales desde variable de entorno")
+        print("Cargando credenciales desde FIREBASE_CREDENTIALS_BASE64")
     
     elif os.path.exists('serviceAccountKey.json'):
         cred = credentials.Certificate('serviceAccountKey.json')
         print("Cargando credenciales desde archivo local")
     
     else:
-        raise ValueError("No se encontró serviceAccountKey.json ni FIREBASE_CREDENTIALS_BASE64")
+        raise ValueError("No se encontró ninguna fuente de credenciales de Firebase")
     
     firebase_admin.initialize_app(cred)
-    print("✅ Firebase Admin inicializado correctamente")
+    print("Firebase Admin inicializado correctamente")
     
 except Exception as e:
     print(f"Error al inicializar Firebase Admin: {e}")
